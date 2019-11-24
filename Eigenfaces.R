@@ -1,0 +1,1 @@
+imagedata(myjpg, type="grey")
