@@ -1,11 +1,41 @@
 # --------------------------------
 
 # convert greyscale jpeg image into data matrix
-imagedata(myjpg, type="grey")
+library(jpeg)
+library(imager)
+library(spatstat)
+##read in jpeg
+im <- load.image("/Users/zepingluo/Documents/Eigenfaces/eigen_face1.JPG")
+plot(im)
+##convert to grayscale
+gray <- grayscale(im,method = "Luma",drop=TRUE)
+plot(gray)
+
+##convert gray image to matrix
+gray_matrix <- as.matrix(gray)
+dim(gray_matrix)
+##convert matrix back to image
+image <- im(gray_matrix)
+plot(image)
+
+
+#dim(gray)
+#https://stackoverflow.com/questions/31800687/how-to-get-a-pixel-matrix-from-grayscale-image-in-r/31804561
+#https://www.tutorialspoint.com/dip/grayscale_to_rgb_conversion.htm
+#matrix <- 1/3*x[,,1]+1/3*x[,,2]+1/3*x[,,3]
+#dim(matrix)
 
 # ------------------------------------
 
 # convert image data matrix into r*c by 1 vector
+
+#it is taken col by col from i=1 to n
+vector <- as.vector(gray_matrix)
+dim(vector)
+matrix1 <- cbind(vector,vector)
+dim(matrix1)
+matrix2 <- cbind(matrix1,vector)
+dim(matrix2)
 # bind all vectors into a single r*c by 20ish matrix
 
 # ------------------------------
