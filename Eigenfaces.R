@@ -5,7 +5,18 @@ library(jpeg)
 library(imager)
 library(spatstat)
 ##read in jpeg
-im <- load.image("/Users/zepingluo/Documents/Eigenfaces/eigen_face1.JPG")
+prepath <- "/Users/zepingluo/Documents/Eigenfaces/faceimages/"
+filename <- c("IMG_0733.JPG","IMG_0734.JPG","IMG_0735.JPG","IMG_0749.JPG","IMG_0753.JPG","IMG_0755.JPG","IMG_0759.JPG","IMG_0772.JPG")
+paths <- c()
+images <- c()
+vecs <- c()
+for(index in 1:8){
+  paths <- c(paths,paste(prepath,filename[index],sep=""))
+  vec <- as.vector(as.matrix(grayscale(load.image(paths[index]),method = "Luma",drop=TRUE)))
+  vecs <- cbind(vecs,vec)
+}
+dim(vecs)
+vec <- as.vector(as.matrix(grayscale(load.image(paths[index]),method = "Luma",drop=TRUE)))
 plot(im)
 ##convert to grayscale
 gray <- grayscale(im,method = "Luma",drop=TRUE)
