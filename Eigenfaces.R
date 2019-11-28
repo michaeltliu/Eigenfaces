@@ -10,23 +10,27 @@ filename <- c("IMG_0733.JPG","IMG_0734.JPG","IMG_0735.JPG","IMG_0749.JPG","IMG_0
 paths <- c()
 images <- c()
 vecs <- c()
+# bind all vectors into a single r*c by 20ish matrix *vecs*
 for(index in 1:8){
+  #collect the paths in the vector
   paths <- c(paths,paste(prepath,filename[index],sep=""))
-  vec <- as.vector(as.matrix(grayscale(load.image(paths[index]),method = "Luma",drop=TRUE)))
+  #read single filename
+  im <- load.image(paths[index])
+  #convert to grayscale
+  grayscale <- grayscale(im,method = "Luma",drop=TRUE)
+  #plot it
+  plot(grayscale)
+  #convert grayscale to vector
+  vec <- as.vector(as.matrix(grayscale))
+  #collect vectors in vecs
+ 
   vecs <- cbind(vecs,vec)
 }
 dim(vecs)
-vec <- as.vector(as.matrix(grayscale(load.image(paths[index]),method = "Luma",drop=TRUE)))
-plot(im)
-##convert to grayscale
-gray <- grayscale(im,method = "Luma",drop=TRUE)
-plot(gray)
 
-##convert gray image to matrix
-gray_matrix <- as.matrix(gray)
-dim(gray_matrix)
-##convert matrix back to image
-image <- im(gray_matrix)
+
+##code for onvert matrix back to image
+image <- im(as.matrix(grayscale))
 plot(image)
 
 
@@ -36,18 +40,7 @@ plot(image)
 #matrix <- 1/3*x[,,1]+1/3*x[,,2]+1/3*x[,,3]
 #dim(matrix)
 
-# ------------------------------------
 
-# convert image data matrix into r*c by 1 vector
-
-#it is taken col by col from i=1 to n
-vector <- as.vector(gray_matrix)
-dim(vector)
-matrix1 <- cbind(vector,vector)
-dim(matrix1)
-matrix2 <- cbind(matrix1,vector)
-dim(matrix2)
-# bind all vectors into a single r*c by 20ish matrix
 
 # ------------------------------
 
