@@ -46,6 +46,18 @@ plot(image)
 
 # find the mean vector then zero out/subtract the mean from 
 # all vectors in the matrix. 
+mean_vec <- c()
+#average face vector
+mean_vec <- apply(vecs,1,mean)
+dim(mean_vec)
+X_mean <- matrix(, nrow = 921600, ncol = 0)
+for(i in 1:8){
+  X_mean <- cbind(X_mean, mean_vec)
+}
+dim(X_mean)
+#the vecs now is centerd
+vecs <- vecs-X_mean
+
 
 # ----------------------------------
 
