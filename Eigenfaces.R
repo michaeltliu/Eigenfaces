@@ -98,6 +98,26 @@ table <- cbind(table,tag)
 colnames(table) <- c("pc1","pc2","label")
 p <- ggplot(data=table,aes(x=pc1,y=pc2,label=label))
 p+geom_point()+geom_text_repel()
+
+
+
+
+
+#--------------------------
+#visualzie eigen faces
+
+
+image <- im(matrix(eigenvectors[,1],nrow = 960))
+plot(image)
+
+
+
+
+
+
+
+
+#----------------------------
 # -------------------------------------
 
 # take a new face vector and project onto principal components
