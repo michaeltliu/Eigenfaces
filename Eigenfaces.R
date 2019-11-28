@@ -4,6 +4,7 @@
 library(jpeg)
 library(imager)
 library(spatstat)
+library(ggfortify)
 ##read in jpeg
 prepath <- "/Users/zepingluo/Documents/Eigenfaces/faceimages/"
 filename <- c("IMG_0733.JPG","IMG_0734.JPG","IMG_0735.JPG","IMG_0749.JPG","IMG_0753.JPG","IMG_0755.JPG","IMG_0759.JPG","IMG_0772.JPG")
@@ -65,11 +66,22 @@ vecs <- vecs-X_mean
 # matrix. Use the small rank of the data matrix to simplify
 # eigen computations
 
+pca <- prcomp(t(vecs))
+plot(pca)
+colnames(vecs) <- c(1:8)
+#long runtime??
+autoplot(pca, data = t(vecs),  loadings = TRUE,loadings.label=TRUE)
+
 # -----------------------------------
 
 # choose top 2 or 3 principal components (for visuals)
+proj_matrix <- pca$rotation[,0:2]
+dim(proj_matrix)
+dim(vecs)
+
 # and choose top 5 principal components (for more accurate analysis)
 # and project each original face vector onto these principal components
+result <- proj_matrix%*%vecs
 
 # -------------------------------------
 
