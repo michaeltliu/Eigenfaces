@@ -109,6 +109,7 @@ result <- t(proj_matrix)%*%vecs
 dim(result)
 table <- as.data.frame(t(result))
 table <- cbind(table,filename)
+#data frame to visualize each image's coodinates with respect to top k pc 
 coord_train <- table
 #--------------------------
 ##visualzie eigen faces
@@ -155,12 +156,20 @@ dim(test_vecs)
 ## project test images onto principal components
 ## compute new projection point to old projection points
 ## compare Euclidean distance of coordinates with respect to top k eigen bases
+
+#project test image vectors to k principle components
 result1 <- t(proj_matrix)%*%test_vecs
+#visualize it in a table
 coord_test <- as.data.frame(t(result1))
 coord_test <- cbind(coord_test,test_filename)
+
+#looping through each image vector in variable result1 (testing images)and calulate its distance 
+#to all image vectors in variable result (training images) and then add a column to the table 
+#of coord_train 
 for(index3 in 1:4){
   distances <- c()
   for(index2 in 1:length){
+    #result is the coordinates of all training image vectors, result1 is testing
     distance <- dist(rbind(result[,index2],result1[,index3]))
     distance <- as.numeric(distance)
     distances <- c(distances,distance)
