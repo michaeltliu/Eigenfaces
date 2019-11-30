@@ -13,6 +13,7 @@ length <- 19
 #path of image folder in your own local directory
 prepath <- "/Users/zepingluo/Documents/Eigenfaces/faceimages/"
 
+
 filename <- c("Danny1.JPG","Danny2.JPG","Danny3.JPG","Danny4.JPG","Jane1.JPG","Jane2.JPG","Jane3.JPG",
               "Jane4.JPG","Jane5.JPG","Andy1.JPG","Andy2.JPG","Andy3.JPG","Andy4.JPG","Andy5.JPG",
               "Jessica1.JPG","Jessica2.JPG","Jessica3.JPG","Jessica4.JPG","Jessica5.JPG")
@@ -29,7 +30,7 @@ for(index in 1:length){
   #convert the image object into grayscale
   grayscale <- grayscale(im,method = "Luma",drop=TRUE)
   #(Optional) plot it
-      plot(grayscale)
+    #  plot(grayscale)
   
   #convert grayscale image to a vector 
   vec <- as.vector(as.matrix(grayscale))
@@ -41,6 +42,31 @@ for(index in 1:length){
 #vecs collect images as giant vectors 
 dim(vecs)
 
+#------------------------------
+##loading testing images
+test_path <- "/Users/zepingluo/Documents/Eigenfaces/testingimages/"
+test_filename <- c("Danny.JPG")
+test_paths <- c()
+test_images <- c()
+test_vecs <- c()
+j <- 1
+
+for(index1 in 1:j){
+  #collect file path in the paths
+  test_paths <- c(test_paths,paste(test_path,test_filename[index1],sep=""))
+  #read in image object from path in paths
+  im <- load.image(test_paths[index1])
+  #convert the image object into grayscale
+  grayscale <- grayscale(im,method = "Luma",drop=TRUE)
+  #(Optional) plot it
+  #  plot(grayscale)
+  
+  #convert grayscale image to a vector 
+  test_vec <- as.vector(as.matrix(grayscale))
+  #collect vectors in vecs
+  test_vecs <- cbind(test_vecs,test_vec)
+}
+dim(test_vecs)
 
 # ------------------------------
 ##Center the data
@@ -91,15 +117,23 @@ dim(result)
 #plot for case of k =2 
 
 table <- as.data.frame(t(result))
-table <- cbind(table,tag)
-p <- ggplot(data=table,aes(x=V1,y=V2, label=tag))
+table <- cbind(table,filename)
+p <- ggplot(data=table,aes(x=V1,y=V2, label=filename))
 p+geom_point()+geom_text_repel()+labs(x="PC1",y="PC2")
 
 
-# Choose top 5 principal components (for more accurate analysis)
+# Choose top k principal components (for more accurate analysis)
 # and project each original face vector onto these principal components
+k <- 6
+proj_matrix <- eigenvectors[,0:k]
+dim(proj_matrix)
+dim(vecs)
 
-
+result <- t(proj_matrix)%*%vecs
+dim(result)
+table <- as.data.frame(t(result))
+table <- cbind(table,filename)
+coord_train <- table
 #--------------------------
 ##visualzie eigen faces
 
@@ -115,9 +149,19 @@ for(e in 1:6){
 
 
 # -------------------------------------
-## take a new face vector and project onto principal components
+## project test images onto principal components
 ## compute new projection point to old projection points
 ## compare Euclidean distance of coordinates with respect to top k eigen bases
+result1 <- t(proj_matrix)%*%test_vecs
+coord_test <- as.data.frame(t(result1))
+coord_test <- cbind(coord_test,test_filename)
+distances <- c()
+for(index2 in 1:length){
+  distance <- dist(rbind(result[,index2],result1[,1]))
+  distance <- as.numeric(distance)
+  distances <- c(distances,distance)
+}
+cbind(distances,filename)
 
 
 
