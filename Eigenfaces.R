@@ -29,7 +29,7 @@ for(index in 1:length){
   #convert the image object into grayscale
   grayscale <- grayscale(im,method = "Luma",drop=TRUE)
   #(Optional) plot it
-  #    plot(grayscale)
+      plot(grayscale)
   
   #convert grayscale image to a vector 
   vec <- as.vector(as.matrix(grayscale))
@@ -90,13 +90,10 @@ dim(result)
 
 #plot for case of k =2 
 
-table <- as.table(t(result))
-tag <- filename
+table <- as.data.frame(t(result))
 table <- cbind(table,tag)
-colnames(table) <- c("pc1","pc2","label")
-p <- ggplot(data=table,aes(x=pc1,y=pc2,label=label))
-p+geom_point()+geom_text_repel()
-
+p <- ggplot(data=table,aes(x=V1,y=V2, label=tag))
+p+geom_point()+geom_text_repel()+labs(x="PC1",y="PC2")
 
 
 # Choose top 5 principal components (for more accurate analysis)
@@ -107,8 +104,8 @@ p+geom_point()+geom_text_repel()
 ##visualzie eigen faces
 
 #set up frame
-par(mfrow=c(2,2))
-for(e in 1:4){
+par(mfrow=c(2,3))
+for(e in 1:6){
   #convert eigen vector back into matrix
   image_matrix <- matrix(eigenvectors[,e],nrow = 960)
   #convert matrix back into image
