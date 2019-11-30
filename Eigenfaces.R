@@ -4,19 +4,20 @@ library(imager)
 library(spatstat)
 library(ggfortify)
 library(ggrepel) 
+library(tidyverse)
 # --------------------------------
 ##read in jpeg and convert each single jpeg image into grayscale image and then into a vector.Collect them in a matrix.
 
 #length is the number of images used
 #called upon multiple times later in the files
-length <- 19
+length <- 16
 #path of image folder in your own local directory
 prepath <- "/Users/zepingluo/Documents/Eigenfaces/faceimages/"
 
 
 filename <- c("Danny1.JPG","Danny2.JPG","Danny3.JPG","Danny4.JPG","Jane1.JPG","Jane2.JPG","Jane3.JPG",
-              "Jane4.JPG","Jane5.JPG","Andy1.JPG","Andy2.JPG","Andy3.JPG","Andy4.JPG","Andy5.JPG",
-              "Jessica1.JPG","Jessica2.JPG","Jessica3.JPG","Jessica4.JPG","Jessica5.JPG")
+              "Jane4.JPG","Andy1.JPG","Andy2.JPG","Andy3.JPG","Andy4.JPG",
+              "Jessica1.JPG","Jessica2.JPG","Jessica3.JPG","Jessica4.JPG")
 
 paths <- c()
 images <- c()
@@ -42,31 +43,6 @@ for(index in 1:length){
 #vecs collect images as giant vectors 
 dim(vecs)
 
-#------------------------------
-##loading testing images
-test_path <- "/Users/zepingluo/Documents/Eigenfaces/testingimages/"
-test_filename <- c("Danny.JPG")
-test_paths <- c()
-test_images <- c()
-test_vecs <- c()
-j <- 1
-
-for(index1 in 1:j){
-  #collect file path in the paths
-  test_paths <- c(test_paths,paste(test_path,test_filename[index1],sep=""))
-  #read in image object from path in paths
-  im <- load.image(test_paths[index1])
-  #convert the image object into grayscale
-  grayscale <- grayscale(im,method = "Luma",drop=TRUE)
-  #(Optional) plot it
-  #  plot(grayscale)
-  
-  #convert grayscale image to a vector 
-  test_vec <- as.vector(as.matrix(grayscale))
-  #collect vectors in vecs
-  test_vecs <- cbind(test_vecs,test_vec)
-}
-dim(test_vecs)
 
 # ------------------------------
 ##Center the data
@@ -147,6 +123,33 @@ for(e in 1:6){
   plot(image,main=paste(paste("top ",e),"eigen faces"))
 }
 
+#------------------------------
+##loading testing images
+test_path <- "/Users/zepingluo/Documents/Eigenfaces/testingimages/"
+test_filename <- c("Danny.JPG","Andy.JPG","Jane.JPG","Jessica.JPG")
+test_paths <- c()
+test_images <- c()
+test_vecs <- c()
+j <- 4
+
+for(index1 in 1:j){
+  #collect file path in the paths
+  test_paths <- c(test_paths,paste(test_path,test_filename[index1],sep=""))
+  #read in image object from path in paths
+  im <- load.image(test_paths[index1])
+  #convert the image object into grayscale
+  grayscale <- grayscale(im,method = "Luma",drop=TRUE)
+  #(Optional) plot it
+  #  plot(grayscale)
+  
+  #convert grayscale image to a vector 
+  test_vec <- as.vector(as.matrix(grayscale))
+  #center the test vec
+  test_vec <- test_vec-mean_vec
+  #collect vectors in vecs
+  test_vecs <- cbind(test_vecs,test_vec)
+}
+dim(test_vecs)
 
 # -------------------------------------
 ## project test images onto principal components
@@ -155,13 +158,27 @@ for(e in 1:6){
 result1 <- t(proj_matrix)%*%test_vecs
 coord_test <- as.data.frame(t(result1))
 coord_test <- cbind(coord_test,test_filename)
-distances <- c()
-for(index2 in 1:length){
-  distance <- dist(rbind(result[,index2],result1[,1]))
-  distance <- as.numeric(distance)
-  distances <- c(distances,distance)
+for(index3 in 1:4){
+  distances <- c()
+  for(index2 in 1:length){
+    distance <- dist(rbind(result[,index2],result1[,index3]))
+    distance <- as.numeric(distance)
+    distances <- c(distances,distance)
+  }
+  distances <- signif(distances,5)
+  data_to_join <- as.data.frame(cbind(distances,filename))
+  coord_train <- left_join(coord_train,data_to_join)
+  colnames(coord_train)[k+index3+1] <- test_filename[index3]
 }
-cbind(distances,filename)
+#now coord_train contains the Euclidena distance of all the images in test images to original training images
+coord_train
+#plot several
+p <- ggplot(data=coord_train,aes(filename,Danny.JPG))
+p+geom_point()+ theme(axis.text.x = element_text(angle = 60, hjust = 1))
+
+p <- ggplot(data=coord_train,aes(filename,Andy.JPG))
+p+geom_point()+ theme(axis.text.x = element_text(angle = 60, hjust = 1))
+
 
 
 
